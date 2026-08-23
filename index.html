@@ -6,17 +6,33 @@
 <title>Panduan Kerja Tika</title>
 <style>
   :root{
-    --bg:#F5F6F8;
+    --bg:#EEF2F0;
     --surface:#FFFFFF;
-    --border:#E3E6EA;
-    --text:#1C222B;
-    --text-muted:#6B7380;
+    --surface-alt:#F6F9F7;
+    --border:#DEE6E2;
+    --text:#16211D;
+    --text-muted:#5C6B65;
     --accent:#1F6F63;
     --accent-dark:#17554B;
-    --accent-soft:#E4F1EE;
+    --accent-soft:#E1F0EC;
     --danger:#C0392B;
     --danger-soft:#FBEAE8;
     --radius:10px;
+    --shadow:0 1px 2px rgba(22,33,29,.04), 0 6px 16px rgba(22,33,29,.05);
+  }
+  html[data-theme="dark"]{
+    --bg:#0E1512;
+    --surface:#171F1B;
+    --surface-alt:#1D2621;
+    --border:#293530;
+    --text:#E7EDE9;
+    --text-muted:#8FA098;
+    --accent:#3FBFA6;
+    --accent-dark:#2E9782;
+    --accent-soft:rgba(63,191,166,.16);
+    --danger:#E5695D;
+    --danger-soft:rgba(229,105,93,.16);
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 20px rgba(0,0,0,.35);
   }
   *{box-sizing:border-box;}
   body{
@@ -24,6 +40,7 @@
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     background:var(--bg);
     color:var(--text);
+    transition:background .15s ease,color .15s ease;
   }
   .app{max-width:920px;margin:0 auto;padding:20px 16px 80px;}
 
@@ -31,22 +48,35 @@
   header{
     position:sticky;top:0;z-index:20;
     background:var(--bg);
-    padding-top:4px;padding-bottom:14px;
+    padding-top:4px;padding-bottom:16px;
     margin-bottom:8px;
+    border-bottom:1px solid transparent;
   }
   .header-top{
     display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;
   }
-  .brand{display:flex;flex-direction:column;gap:2px;}
-  .brand h1{font-size:21px;margin:0;letter-spacing:-0.01em;}
-  .brand p{margin:0;font-size:12.5px;color:var(--text-muted);}
+  .brand{display:flex;flex-direction:column;gap:6px;}
+  .brand-mark{display:flex;align-items:center;gap:9px;}
+  .brand-mark .mark{
+    width:9px;height:24px;border-radius:3px;
+    background:linear-gradient(180deg,var(--accent),var(--accent-dark));
+    flex-shrink:0;
+  }
+  .brand h1{font-size:23px;margin:0;letter-spacing:-0.015em;font-weight:750;}
+  .top-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
   .admin-zone{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .theme-toggle{
+    width:34px;height:34px;border-radius:999px;background:var(--surface);
+    border:1px solid var(--border);display:flex;align-items:center;justify-content:center;
+    font-size:15px;padding:0;flex-shrink:0;
+  }
+  .theme-toggle:hover{background:var(--accent-soft);}
   .badge-role{
     font-size:11.5px;font-weight:600;padding:5px 10px;border-radius:999px;
     display:flex;align-items:center;gap:5px;
   }
   .badge-role.admin{background:var(--accent-soft);color:var(--accent-dark);}
-  .badge-role.viewer{background:#EEF0F3;color:var(--text-muted);}
+  .badge-role.viewer{background:var(--surface-alt);color:var(--text-muted);border:1px solid var(--border);}
   .dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
 
   button{
@@ -87,9 +117,12 @@
   /* Cards */
   .list{display:flex;flex-direction:column;gap:10px;margin-top:16px;}
   .card{
-    background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
-    padding:14px 16px;transition:border-color .12s,box-shadow .12s,opacity .12s;
+    background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--cat-color,var(--accent));
+    border-radius:var(--radius);
+    padding:14px 16px 14px 14px;transition:border-color .12s,box-shadow .12s,opacity .12s,transform .12s;
+    box-shadow:var(--shadow);
   }
+  .card:hover{transform:translateY(-1px);}
   .card[draggable="true"]{cursor:grab;}
   .card[draggable="true"]:active{cursor:grabbing;}
   .card.dragging{opacity:.4;}
@@ -114,7 +147,7 @@
   }
   .pin-flag{font-size:11px;color:var(--accent-dark);font-weight:600;display:flex;align-items:center;gap:3px;}
   .card h3{margin:2px 0 6px;font-size:15.5px;}
-  .card-content{font-size:13.8px;line-height:1.55;color:#333;word-wrap:break-word;white-space:pre-wrap;}
+  .card-content{font-size:13.8px;line-height:1.55;color:var(--text);word-wrap:break-word;white-space:pre-wrap;}
   .card-content b, .card-content strong{font-weight:700;}
   .card-actions{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;}
 
@@ -195,10 +228,15 @@
   <header>
     <div class="header-top">
       <div class="brand">
-        <h1>Panduan Kerja Tika</h1>
-        <p>Kumpulan template jawaban untuk agent chat customer service</p>
+        <div class="brand-mark">
+          <span class="mark"></span>
+          <h1>Panduan Kerja Tika</h1>
+        </div>
       </div>
-      <div class="admin-zone" id="adminZone"></div>
+      <div class="top-actions">
+        <button class="theme-toggle" id="themeToggle" title="Ganti tema" type="button">🌙</button>
+        <div class="admin-zone" id="adminZone"></div>
+      </div>
     </div>
 
     <div class="controls">
@@ -212,11 +250,6 @@
       <button class="btn-outline" id="restoreBtn" style="display:none;">Pulihkan Data</button>
       <input type="file" id="restoreFile" accept="application/json" style="display:none;">
       <button class="btn-primary" id="addBtn" style="display:none;">+ Template</button>
-    </div>
-
-    <div class="notice">
-      <span>ℹ️</span>
-      <span>Halaman ini datanya <b>tersimpan di cloud dan dibagikan</b> — bisa diakses dari perangkat/browser mana pun lewat link ini, dan semua orang yang membuka bisa melihat template. Hanya admin yang bisa menambah, mengubah, menghapus, mengubah urutan, atau backup data.</span>
     </div>
   </header>
 
@@ -485,7 +518,7 @@
     list.innerHTML = items.map(t => {
       const color = catColor(t.category);
       return `
-      <div class="card" data-id="${t.id}">
+      <div class="card" data-id="${t.id}" style="--cat-color:${color};">
         <div class="card-top">
           <div class="card-tags">
             <span class="cat-tag" style="background:${color}22;color:${color};">
@@ -835,8 +868,21 @@
   $("searchInput").addEventListener("input", (e) => { searchQuery = e.target.value; renderList(); });
   $("categoryFilter").addEventListener("change", (e) => { currentFilter = e.target.value; renderList(); });
 
+  // ---------- Theme (light/dark) ----------
+  let theme = (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+  function applyTheme(){
+    document.documentElement.setAttribute("data-theme", theme);
+    $("themeToggle").textContent = theme === "light" ? "🌙" : "☀️";
+    $("themeToggle").title = theme === "light" ? "Ganti ke mode gelap" : "Ganti ke mode terang";
+  }
+  $("themeToggle").addEventListener("click", () => {
+    theme = theme === "light" ? "dark" : "light";
+    applyTheme();
+  });
+
   // ---------- Init ----------
   async function init(){
+    applyTheme();
     const [t, c, p] = await Promise.all([
       storageGet("templates"),
       storageGet("categories"),
