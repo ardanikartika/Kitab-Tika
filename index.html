@@ -858,3 +858,865 @@
 </script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panduan Kerja Tika</title>
+<style>
+  :root{
+    --bg:#F5F6F8;
+    --surface:#FFFFFF;
+    --border:#E3E6EA;
+    --text:#1C222B;
+    --text-muted:#6B7380;
+    --accent:#1F6F63;
+    --accent-dark:#17554B;
+    --accent-soft:#E4F1EE;
+    --danger:#C0392B;
+    --danger-soft:#FBEAE8;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+  }
+  .app{max-width:920px;margin:0 auto;padding:20px 16px 80px;}
+
+  /* Header */
+  header{
+    position:sticky;top:0;z-index:20;
+    background:var(--bg);
+    padding-top:4px;padding-bottom:14px;
+    margin-bottom:8px;
+  }
+  .header-top{
+    display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  }
+  .brand{display:flex;flex-direction:column;gap:2px;}
+  .brand h1{font-size:21px;margin:0;letter-spacing:-0.01em;}
+  .brand p{margin:0;font-size:12.5px;color:var(--text-muted);}
+  .admin-zone{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .badge-role{
+    font-size:11.5px;font-weight:600;padding:5px 10px;border-radius:999px;
+    display:flex;align-items:center;gap:5px;
+  }
+  .badge-role.admin{background:var(--accent-soft);color:var(--accent-dark);}
+  .badge-role.viewer{background:#EEF0F3;color:var(--text-muted);}
+  .dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
+
+  button{
+    font-family:inherit;cursor:pointer;border:none;border-radius:8px;
+    font-size:13.5px;font-weight:600;padding:8px 13px;transition:background .12s,opacity .12s;
+  }
+  .btn-primary{background:var(--accent);color:#fff;}
+  .btn-primary:hover{background:var(--accent-dark);}
+  .btn-ghost{background:transparent;color:var(--text-muted);}
+  .btn-ghost:hover{background:#EDEFF2;color:var(--text);}
+  .btn-outline{background:#fff;color:var(--text);border:1px solid var(--border);}
+  .btn-outline:hover{background:#F7F8FA;}
+  .btn-danger-text{background:transparent;color:var(--danger);}
+  .btn-danger-text:hover{background:var(--danger-soft);}
+  .btn-sm{padding:5px 10px;font-size:12.5px;}
+  button:disabled{opacity:.5;cursor:not-allowed;}
+
+  /* Controls row */
+  .controls{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;}
+  .search-wrap{position:relative;flex:1;min-width:180px;}
+  .search-wrap svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-muted);}
+  input[type=text],input[type=password],select,textarea{
+    font-family:inherit;font-size:13.5px;border:1px solid var(--border);border-radius:8px;
+    padding:9px 12px;background:#fff;color:var(--text);width:100%;
+  }
+  .search-wrap input{padding-left:34px;}
+  select{max-width:190px;}
+  input:focus,select:focus,textarea:focus,[contenteditable]:focus{
+    outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);
+  }
+
+  /* Notice */
+  .notice{
+    font-size:12px;color:var(--text-muted);margin-top:10px;padding:8px 11px;
+    background:#EEF0F3;border-radius:8px;display:flex;gap:7px;align-items:flex-start;
+  }
+
+  /* Cards */
+  .list{display:flex;flex-direction:column;gap:10px;margin-top:16px;}
+  .card{
+    background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+    padding:14px 16px;transition:border-color .12s,box-shadow .12s,opacity .12s;
+  }
+  .card[draggable="true"]{cursor:grab;}
+  .card[draggable="true"]:active{cursor:grabbing;}
+  .card.dragging{opacity:.4;}
+  .card.drag-over{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft);}
+  .drag-handle{color:var(--text-muted);font-size:13px;margin-right:2px;user-select:none;}
+
+  .sort-row{
+    display:flex;align-items:center;gap:10px;padding:9px 6px;border-bottom:1px solid var(--border);
+    cursor:grab;border-radius:6px;
+  }
+  .sort-row:active{cursor:grabbing;}
+  .sort-row:last-child{border-bottom:none;}
+  .sort-row.dragging{opacity:.4;}
+  .sort-row.drag-over{background:var(--accent-soft);}
+  .sort-row .drag-handle{font-size:15px;}
+  .sort-row .sort-title{flex:1;font-size:13.5px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:6px;}
+  .card-tags{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .cat-tag{
+    font-size:11px;font-weight:600;padding:3px 9px 3px 8px;border-radius:999px;
+    display:inline-flex;align-items:center;gap:5px;
+  }
+  .pin-flag{font-size:11px;color:var(--accent-dark);font-weight:600;display:flex;align-items:center;gap:3px;}
+  .card h3{margin:2px 0 6px;font-size:15.5px;}
+  .card-content{font-size:13.8px;line-height:1.55;color:#333;word-wrap:break-word;white-space:pre-wrap;}
+  .card-content b, .card-content strong{font-weight:700;}
+  .card-actions{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;}
+
+  .empty{
+    text-align:center;padding:60px 20px;color:var(--text-muted);
+  }
+  .empty svg{margin-bottom:10px;opacity:.5;}
+
+  /* Modal */
+  .overlay{
+    position:fixed;inset:0;background:rgba(20,24,30,.45);display:none;
+    align-items:flex-start;justify-content:center;padding:5vh 14px;z-index:100;overflow-y:auto;
+  }
+  .overlay.open{display:flex;}
+  .modal{
+    background:#fff;border-radius:14px;width:100%;max-width:520px;padding:22px;
+    box-shadow:0 20px 50px rgba(0,0,0,.2);
+  }
+  .modal h2{margin:0 0 14px;font-size:17px;}
+  .field{margin-bottom:13px;}
+  .field label{display:block;font-size:12.5px;font-weight:600;color:var(--text-muted);margin-bottom:5px;}
+  .field-row{display:flex;gap:10px;}
+  .field-row .field{flex:1;}
+
+  .toolbar{
+    display:flex;align-items:center;gap:5px;border:1px solid var(--border);border-bottom:none;
+    border-radius:8px 8px 0 0;padding:6px 8px;background:#FAFBFC;flex-wrap:wrap;
+  }
+  .toolbar button{
+    background:#fff;border:1px solid var(--border);border-radius:6px;padding:4px 9px;
+    font-size:12.5px;font-weight:700;color:var(--text);
+  }
+  .toolbar button.active{background:var(--accent-soft);border-color:var(--accent);color:var(--accent-dark);}
+  .swatch{
+    width:19px;height:19px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px var(--border);
+    padding:0;cursor:pointer;
+  }
+  .swatch-sep{width:1px;height:18px;background:var(--border);margin:0 3px;}
+  .editor{
+    min-height:120px;border:1px solid var(--border);border-radius:0 0 8px 8px;padding:10px 12px;
+    font-size:13.8px;line-height:1.55;background:#fff;
+  }
+  .editor:empty:before{content:attr(data-placeholder);color:#9aa1ab;}
+
+  .checkline{display:flex;align-items:center;gap:8px;font-size:13.5px;margin-bottom:14px;}
+  .checkline input{width:auto;}
+
+  .modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px;}
+  .err-text{color:var(--danger);font-size:12.5px;margin-top:6px;}
+  .hint-text{color:var(--text-muted);font-size:12px;margin-top:6px;}
+
+  /* Kategori manage */
+  .cat-row{
+    display:flex;align-items:center;justify-content:space-between;padding:8px 4px;
+    border-bottom:1px solid var(--border);font-size:13.5px;
+  }
+  .cat-row:last-child{border-bottom:none;}
+  .cat-add-row{display:flex;gap:8px;margin-top:12px;}
+  .cat-add-row input{flex:1;}
+
+  .toast{
+    position:fixed;bottom:22px;left:50%;transform:translateX(-50%);
+    background:#1C222B;color:#fff;padding:9px 16px;border-radius:8px;font-size:13px;
+    opacity:0;pointer-events:none;transition:opacity .2s;z-index:200;
+  }
+  .toast.show{opacity:1;}
+
+  @media(max-width:520px){
+    .controls{flex-direction:column;}
+    select{max-width:100%;}
+    .header-top{flex-direction:column;}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header>
+    <div class="header-top">
+      <div class="brand">
+        <h1>Panduan Kerja Tika</h1>
+        <p>Kumpulan template jawaban untuk agent chat customer service</p>
+      </div>
+      <div class="admin-zone" id="adminZone"></div>
+    </div>
+
+    <div class="controls">
+      <div class="search-wrap">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <input type="text" id="searchInput" placeholder="Cari judul atau isi jawaban...">
+      </div>
+      <select id="categoryFilter"></select>
+      <button class="btn-outline" id="sortBtn" style="display:none;">Urutkan</button>
+      <button class="btn-outline" id="backupBtn" style="display:none;">Backup Data</button>
+      <button class="btn-outline" id="restoreBtn" style="display:none;">Pulihkan Data</button>
+      <input type="file" id="restoreFile" accept="application/json" style="display:none;">
+      <button class="btn-primary" id="addBtn" style="display:none;">+ Template</button>
+    </div>
+
+    <div class="notice">
+      <span>ℹ️</span>
+      <span>Halaman ini datanya <b>tersimpan di cloud dan dibagikan</b> — bisa diakses dari perangkat/browser mana pun lewat link ini, dan semua orang yang membuka bisa melihat template. Hanya admin yang bisa menambah, mengubah, menghapus, mengubah urutan, atau backup data.</span>
+    </div>
+  </header>
+
+  <div class="list" id="list"></div>
+
+</div>
+
+<!-- Login Modal -->
+<div class="overlay" id="loginOverlay">
+  <div class="modal">
+    <h2 id="loginTitle">Masuk sebagai Admin</h2>
+    <div id="loginBody"></div>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="loginCancel">Batal</button>
+      <button class="btn-primary" id="loginSubmit">Masuk</button>
+    </div>
+  </div>
+</div>
+
+<!-- Template Modal -->
+<div class="overlay" id="tplOverlay">
+  <div class="modal" style="max-width:600px;">
+    <h2 id="tplModalTitle">Tambah Template</h2>
+    <div class="field">
+      <label>Judul</label>
+      <input type="text" id="tplTitle" placeholder="Contoh: Konfirmasi Jadwal Pemasangan">
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Kategori</label>
+        <select id="tplCategory"></select>
+      </div>
+      <div class="field" style="flex:0 0 auto;align-self:flex-end;">
+        <button class="btn-outline btn-sm" id="manageCatBtn" type="button">Kelola Kategori</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>Isi Jawaban</label>
+      <div class="toolbar">
+        <button type="button" id="boldBtn" title="Tebal"><b>B</b></button>
+        <div class="swatch-sep"></div>
+        <button type="button" class="swatch" data-color="#1C222B" style="background:#1C222B" title="Hitam"></button>
+        <button type="button" class="swatch" data-color="#C0392B" style="background:#C0392B" title="Merah"></button>
+        <button type="button" class="swatch" data-color="#2E6FA3" style="background:#2E6FA3" title="Biru"></button>
+        <button type="button" class="swatch" data-color="#1F6F63" style="background:#1F6F63" title="Hijau"></button>
+        <button type="button" class="swatch" data-color="#B5651D" style="background:#B5651D" title="Oranye"></button>
+      </div>
+      <div class="editor" id="tplEditor" contenteditable="true" data-placeholder="Tulis isi jawaban di sini..."></div>
+    </div>
+    <div class="checkline" style="margin-top:14px;">
+      <input type="checkbox" id="tplPinned">
+      <label for="tplPinned" style="margin:0;">Sematkan template ini di atas</label>
+    </div>
+    <div class="err-text" id="tplErr" style="display:none;"></div>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="tplCancel">Batal</button>
+      <button class="btn-primary" id="tplSave">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- Urutkan Modal -->
+<div class="overlay" id="sortOverlay">
+  <div class="modal">
+    <h2>Urutkan Template</h2>
+    <p class="hint-text" style="margin-top:-8px;">Seret (drag) baris untuk mengubah urutan tampilan template di halaman utama.</p>
+    <div id="sortList" style="max-height:58vh;overflow-y:auto;margin-top:10px;"></div>
+    <div class="modal-actions">
+      <button class="btn-primary" id="sortDone">Selesai</button>
+    </div>
+  </div>
+</div>
+
+<!-- Kelola Kategori Modal -->
+<div class="overlay" id="catOverlay">
+  <div class="modal">
+    <h2>Kelola Kategori</h2>
+    <div id="catList"></div>
+    <div class="cat-add-row">
+      <input type="text" id="newCatInput" placeholder="Nama kategori baru">
+      <button class="btn-primary btn-sm" id="addCatBtn">Tambah</button>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-primary" id="catDone">Selesai</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete confirm -->
+<div class="overlay" id="delOverlay">
+  <div class="modal" style="max-width:380px;">
+    <h2>Hapus Template?</h2>
+    <p style="font-size:13.5px;color:var(--text-muted);margin-top:0;">Template <b id="delName"></b> akan dihapus permanen untuk semua orang. Tindakan ini tidak bisa dibatalkan.</p>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="delCancel">Batal</button>
+      <button class="btn-primary" style="background:var(--danger);" id="delConfirm">Hapus</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  const DEFAULT_CATEGORIES = ["Umum"];
+  const CAT_COLORS = ["#1F6F63","#2E6FA3","#B5651D","#7A5AB8","#C0392B","#5A7247","#8A6D3B","#3D6B99"];
+
+  let templates = [];
+  let categories = [];
+  let adminPassword = null; // null = belum diset
+  let isAdmin = false;
+  let editingId = null;
+  let deletingId = null;
+  let currentFilter = "all";
+  let searchQuery = "";
+  let dragSourceId = null;
+
+  const $ = (id) => document.getElementById(id);
+
+  function toast(msg){
+    const t = $("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(()=>t.classList.remove("show"), 1600);
+  }
+
+  const FIREBASE_DB_URL = "https://kitabsucitika-default-rtdb.asia-southeast1.firebasedatabase.app";
+
+  async function storageGet(key){
+    try{
+      const res = await fetch(`${FIREBASE_DB_URL}/kjcs/${key}.json`);
+      if(!res.ok) return null;
+      return await res.json();
+    }catch(e){ console.error("Storage get error", e); return null; }
+  }
+  async function storageSet(key, value){
+    try{
+      const res = await fetch(`${FIREBASE_DB_URL}/kjcs/${key}.json`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(value)
+      });
+      if(!res.ok) throw new Error("PUT failed " + res.status);
+    }catch(e){ console.error("Storage set error", e); toast("Gagal menyimpan ke database. Cek koneksi internet."); }
+  }
+
+  function catColor(name){
+    let h = 0;
+    for(let i=0;i<name.length;i++) h = (h*31 + name.charCodeAt(i)) >>> 0;
+    return CAT_COLORS[h % CAT_COLORS.length];
+  }
+
+  function stripHtml(html){
+    const d = document.createElement("div");
+    d.innerHTML = html;
+    return d.textContent || "";
+  }
+
+  // --- Sanitizer: only allow b/strong/br/div/span(color) ---
+  function sanitizeHtml(html){
+    const src = document.createElement("div");
+    src.innerHTML = html;
+    const out = document.createElement("div");
+
+    function cleanNode(node, parent){
+      for(const child of Array.from(node.childNodes)){
+        if(child.nodeType === Node.TEXT_NODE){
+          parent.appendChild(document.createTextNode(child.textContent));
+        } else if(child.nodeType === Node.ELEMENT_NODE){
+          const tag = child.tagName.toLowerCase();
+          if(tag === "script" || tag === "style"){
+            continue; // drop entirely
+          }
+          if(["b","strong","br","div","p"].includes(tag)){
+            const el = document.createElement(tag === "p" ? "div" : tag);
+            parent.appendChild(el);
+            cleanNode(child, el);
+          } else if(tag === "span" || tag === "font"){
+            let color = (child.style && child.style.color) || child.getAttribute("color") || "";
+            const el = document.createElement("span");
+            if(color && /^(#[0-9a-fA-F]{3,8}|rgb\(.*\)|[a-zA-Z]+)$/.test(color.trim())){
+              el.style.color = color;
+            }
+            parent.appendChild(el);
+            cleanNode(child, el);
+          } else {
+            // unwrap unknown tags, keep children
+            cleanNode(child, parent);
+          }
+        }
+      }
+    }
+    cleanNode(src, out);
+    return out.innerHTML;
+  }
+
+  // ---------- Rendering ----------
+  function renderAdminZone(){
+    const zone = $("adminZone");
+    if(isAdmin){
+      zone.innerHTML = `
+        <span class="badge-role admin"><span class="dot"></span>Admin</span>
+        <button class="btn-outline btn-sm" id="changePwBtn">Ganti Password</button>
+        <button class="btn-ghost btn-sm" id="logoutBtn">Keluar</button>
+      `;
+      $("logoutBtn").onclick = () => { isAdmin = false; render(); };
+      $("changePwBtn").onclick = openChangePassword;
+    } else {
+      zone.innerHTML = `
+        <span class="badge-role viewer"><span class="dot"></span>Mode Lihat</span>
+        <button class="btn-outline btn-sm" id="loginBtn">Masuk sebagai Admin</button>
+      `;
+      $("loginBtn").onclick = openLogin;
+    }
+    $("addBtn").style.display = isAdmin ? "inline-flex" : "none";
+    $("sortBtn").style.display = isAdmin ? "inline-flex" : "none";
+    $("backupBtn").style.display = isAdmin ? "inline-flex" : "none";
+    $("restoreBtn").style.display = isAdmin ? "inline-flex" : "none";
+  }
+
+  function renderCategoryFilter(){
+    const sel = $("categoryFilter");
+    const prev = sel.value || "all";
+    sel.innerHTML = `<option value="all">Semua Kategori</option>` +
+      categories.map(c => `<option value="${escAttr(c)}">${escHtml(c)}</option>`).join("");
+    sel.value = categories.includes(prev) || prev === "all" ? prev : "all";
+    currentFilter = sel.value;
+  }
+
+  function renderTplCategoryOptions(selected){
+    const sel = $("tplCategory");
+    sel.innerHTML = categories.map(c => `<option value="${escAttr(c)}">${escHtml(c)}</option>`).join("");
+    if(selected && categories.includes(selected)) sel.value = selected;
+  }
+
+  function escHtml(s){
+    return String(s).replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+  }
+  function escAttr(s){ return escHtml(s); }
+
+  function renderList(){
+    const list = $("list");
+    let items = templates.filter(t => {
+      if(currentFilter !== "all" && t.category !== currentFilter) return false;
+      if(searchQuery){
+        const hay = (t.title + " " + stripHtml(t.content)).toLowerCase();
+        if(!hay.includes(searchQuery.toLowerCase())) return false;
+      }
+      return true;
+    });
+    items.sort((a,b) => (a.order ?? 0) - (b.order ?? 0));
+
+    if(items.length === 0){
+      list.innerHTML = `
+        <div class="empty">
+          <div>📭</div>
+          <p>${templates.length === 0 ? "Belum ada template jawaban." : "Tidak ada template yang cocok."}</p>
+          ${isAdmin && templates.length === 0 ? `<button class="btn-primary" id="emptyAddBtn">+ Tambah Template Pertama</button>` : ""}
+        </div>`;
+      if(isAdmin && templates.length === 0){
+        $("emptyAddBtn").onclick = () => openTplModal(null);
+      }
+      return;
+    }
+
+    list.innerHTML = items.map(t => {
+      const color = catColor(t.category);
+      return `
+      <div class="card" data-id="${t.id}">
+        <div class="card-top">
+          <div class="card-tags">
+            <span class="cat-tag" style="background:${color}22;color:${color};">
+              <span class="dot" style="background:${color};"></span>${escHtml(t.category)}
+            </span>
+            ${t.pinned ? `<span class="pin-flag">📌 Disematkan</span>` : ""}
+          </div>
+        </div>
+        <h3>${escHtml(t.title)}</h3>
+        <div class="card-content">${t.content}</div>
+        <div class="card-actions">
+          <button class="btn-outline btn-sm copy-btn" data-id="${t.id}">Salin</button>
+          ${isAdmin ? `
+            <button class="btn-ghost btn-sm edit-btn" data-id="${t.id}">Edit</button>
+            <button class="btn-danger-text btn-sm del-btn" data-id="${t.id}">Hapus</button>
+          ` : ""}
+        </div>
+      </div>`;
+    }).join("");
+
+    list.querySelectorAll(".copy-btn").forEach(b => b.onclick = () => copyTemplate(b.dataset.id));
+    list.querySelectorAll(".edit-btn").forEach(b => b.onclick = () => openTplModal(b.dataset.id));
+    list.querySelectorAll(".del-btn").forEach(b => b.onclick = () => openDeleteConfirm(b.dataset.id));
+  }
+
+  function reorderTemplates(sourceId, targetId){
+    const sorted = [...templates].sort((a,b) => (a.order ?? 0) - (b.order ?? 0));
+    const fromIdx = sorted.findIndex(t => t.id === sourceId);
+    const toIdx = sorted.findIndex(t => t.id === targetId);
+    if(fromIdx < 0 || toIdx < 0) return;
+    const [moved] = sorted.splice(fromIdx, 1);
+    sorted.splice(toIdx, 0, moved);
+    sorted.forEach((t, i) => { t.order = i; });
+    storageSet("templates", templates);
+  }
+
+  // ---------- Urutkan modal (drag & drop hanya di sini) ----------
+  function openSortModal(){
+    renderSortList();
+    $("sortOverlay").classList.add("open");
+  }
+  function renderSortList(){
+    const wrap = $("sortList");
+    const sorted = [...templates].sort((a,b) => (a.order ?? 0) - (b.order ?? 0));
+    if(sorted.length === 0){
+      wrap.innerHTML = `<p class="hint-text">Belum ada template.</p>`;
+      return;
+    }
+    wrap.innerHTML = sorted.map(t => {
+      const color = catColor(t.category);
+      return `
+      <div class="sort-row" draggable="true" data-id="${t.id}">
+        <span class="drag-handle">⠿</span>
+        <span class="sort-title">${escHtml(t.title)}</span>
+        <span class="cat-tag" style="background:${color}22;color:${color};flex-shrink:0;">
+          <span class="dot" style="background:${color};"></span>${escHtml(t.category)}
+        </span>
+      </div>`;
+    }).join("");
+
+    wrap.querySelectorAll(".sort-row").forEach(row => {
+      row.addEventListener("dragstart", () => {
+        dragSourceId = row.dataset.id;
+        row.classList.add("dragging");
+      });
+      row.addEventListener("dragend", () => {
+        row.classList.remove("dragging");
+        wrap.querySelectorAll(".sort-row").forEach(r => r.classList.remove("drag-over"));
+      });
+      row.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        if(row.dataset.id !== dragSourceId) row.classList.add("drag-over");
+      });
+      row.addEventListener("dragleave", () => row.classList.remove("drag-over"));
+      row.addEventListener("drop", (e) => {
+        e.preventDefault();
+        row.classList.remove("drag-over");
+        const targetId = row.dataset.id;
+        if(!dragSourceId || dragSourceId === targetId) return;
+        reorderTemplates(dragSourceId, targetId);
+        dragSourceId = null;
+        renderSortList();
+      });
+    });
+  }
+  $("sortBtn").onclick = openSortModal;
+  $("sortDone").onclick = () => { $("sortOverlay").classList.remove("open"); render(); };
+
+  // ---------- Backup & Restore ----------
+  function exportBackup(){
+    const payload = {
+      app: "panduan-kerja-tika",
+      exportedAt: new Date().toISOString(),
+      templates,
+      categories
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    const stamp = new Date().toISOString().slice(0,10);
+    a.href = url;
+    a.download = `panduan-kerja-tika-backup-${stamp}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast("Backup berhasil diunduh");
+  }
+  $("backupBtn").onclick = exportBackup;
+  $("restoreBtn").onclick = () => $("restoreFile").click();
+  $("restoreFile").addEventListener("change", async (e) => {
+    const file = e.target.files[0];
+    if(!file) return;
+    try{
+      const text = await file.text();
+      const data = JSON.parse(text);
+      if(!Array.isArray(data.templates) || !Array.isArray(data.categories)){
+        toast("File backup tidak valid");
+        e.target.value = "";
+        return;
+      }
+      const ok = confirm(`Pulihkan data dari file ini?\n\nData saat ini (${templates.length} template) akan DIGANTI dengan data dari backup (${data.templates.length} template). Tindakan ini tidak bisa dibatalkan.`);
+      if(!ok){ e.target.value = ""; return; }
+      templates = data.templates;
+      categories = data.categories.length ? data.categories : DEFAULT_CATEGORIES;
+      templates.forEach((tpl, i) => { if(typeof tpl.order !== "number") tpl.order = i; });
+      await storageSet("templates", templates);
+      await storageSet("categories", categories);
+      render();
+      toast("Data berhasil dipulihkan dari backup");
+    }catch(err){
+      toast("Gagal membaca file backup");
+    }
+    e.target.value = "";
+  });
+
+  function copyTemplate(id){
+    const t = templates.find(x => x.id === id);
+    if(!t) return;
+    const text = stripHtml(t.content);
+    navigator.clipboard.writeText(text).then(() => toast("Jawaban disalin ✓")).catch(() => toast("Gagal menyalin"));
+  }
+
+  function render(){
+    renderAdminZone();
+    renderCategoryFilter();
+    renderList();
+  }
+
+  // ---------- Login / Admin password ----------
+  function openLogin(){
+    const title = $("loginTitle");
+    const body = $("loginBody");
+    if(adminPassword === null){
+      title.textContent = "Buat Password Admin";
+      body.innerHTML = `
+        <div class="field"><label>Password Baru</label><input type="password" id="pwNew1"></div>
+        <div class="field"><label>Ulangi Password</label><input type="password" id="pwNew2"></div>
+        <p class="hint-text">Password ini dipakai untuk membatasi siapa saja yang bisa menambah/mengubah template. Simpan baik-baik.</p>
+        <div class="err-text" id="loginErr" style="display:none;"></div>
+      `;
+      $("loginSubmit").textContent = "Buat & Masuk";
+      $("loginSubmit").onclick = async () => {
+        const p1 = $("pwNew1").value, p2 = $("pwNew2").value;
+        if(!p1 || p1.length < 4){ showLoginErr("Password minimal 4 karakter."); return; }
+        if(p1 !== p2){ showLoginErr("Password tidak sama."); return; }
+        adminPassword = p1;
+        await storageSet("admin-password", adminPassword);
+        isAdmin = true;
+        closeLogin();
+        render();
+        toast("Password admin dibuat, kamu masuk sebagai admin");
+      };
+    } else {
+      title.textContent = "Masuk sebagai Admin";
+      body.innerHTML = `
+        <div class="field"><label>Password Admin</label><input type="password" id="pwLogin"></div>
+        <div class="err-text" id="loginErr" style="display:none;"></div>
+      `;
+      $("loginSubmit").textContent = "Masuk";
+      $("loginSubmit").onclick = () => {
+        const p = $("pwLogin").value;
+        if(p === adminPassword){
+          isAdmin = true;
+          closeLogin();
+          render();
+          toast("Masuk sebagai admin");
+        } else {
+          showLoginErr("Password salah.");
+        }
+      };
+    }
+    $("loginOverlay").classList.add("open");
+  }
+  function showLoginErr(msg){
+    const el = $("loginErr");
+    el.textContent = msg;
+    el.style.display = "block";
+  }
+  function closeLogin(){ $("loginOverlay").classList.remove("open"); }
+  $("loginCancel").onclick = closeLogin;
+
+  function openChangePassword(){
+    const title = $("loginTitle");
+    const body = $("loginBody");
+    title.textContent = "Ganti Password Admin";
+    body.innerHTML = `
+      <div class="field"><label>Password Saat Ini</label><input type="password" id="pwCur"></div>
+      <div class="field"><label>Password Baru</label><input type="password" id="pwNewA"></div>
+      <div class="field"><label>Ulangi Password Baru</label><input type="password" id="pwNewB"></div>
+      <div class="err-text" id="loginErr" style="display:none;"></div>
+    `;
+    $("loginSubmit").textContent = "Simpan";
+    $("loginSubmit").onclick = async () => {
+      if($("pwCur").value !== adminPassword){ showLoginErr("Password saat ini salah."); return; }
+      const n1 = $("pwNewA").value, n2 = $("pwNewB").value;
+      if(!n1 || n1.length < 4){ showLoginErr("Password baru minimal 4 karakter."); return; }
+      if(n1 !== n2){ showLoginErr("Password baru tidak sama."); return; }
+      adminPassword = n1;
+      await storageSet("admin-password", adminPassword);
+      closeLogin();
+      toast("Password berhasil diganti");
+    };
+    $("loginOverlay").classList.add("open");
+  }
+
+  // ---------- Template modal ----------
+  let savedRange = null;
+  function openTplModal(id){
+    editingId = id;
+    const t = id ? templates.find(x => x.id === id) : null;
+    $("tplModalTitle").textContent = t ? "Edit Template" : "Tambah Template";
+    $("tplTitle").value = t ? t.title : "";
+    renderTplCategoryOptions(t ? t.category : categories[0]);
+    $("tplEditor").innerHTML = t ? t.content : "";
+    $("tplPinned").checked = t ? !!t.pinned : false;
+    $("tplErr").style.display = "none";
+    $("tplOverlay").classList.add("open");
+    setTimeout(() => $("tplTitle").focus(), 50);
+  }
+  function closeTplModal(){ $("tplOverlay").classList.remove("open"); }
+  $("tplCancel").onclick = closeTplModal;
+
+  $("addBtn").onclick = () => openTplModal(null);
+
+  $("boldBtn").addEventListener("mousedown", (e) => e.preventDefault());
+  $("boldBtn").addEventListener("click", () => {
+    document.execCommand("styleWithCSS", false, false);
+    document.execCommand("bold");
+    $("tplEditor").focus();
+  });
+  document.querySelectorAll(".swatch").forEach(sw => {
+    sw.addEventListener("mousedown", (e) => e.preventDefault());
+    sw.addEventListener("click", () => {
+      document.execCommand("styleWithCSS", false, true);
+      document.execCommand("foreColor", false, sw.dataset.color);
+      $("tplEditor").focus();
+    });
+  });
+
+  $("tplSave").onclick = async () => {
+    const title = $("tplTitle").value.trim();
+    const category = $("tplCategory").value;
+    const content = sanitizeHtml($("tplEditor").innerHTML.trim());
+    const pinned = $("tplPinned").checked;
+    if(!title){ showTplErr("Judul tidak boleh kosong."); return; }
+    if(!stripHtml(content).trim()){ showTplErr("Isi jawaban tidak boleh kosong."); return; }
+
+    const now = Date.now();
+    if(editingId){
+      const t = templates.find(x => x.id === editingId);
+      t.title = title; t.category = category; t.content = content; t.pinned = pinned; t.updatedAt = now;
+    } else {
+      const maxOrder = templates.reduce((m, t) => Math.max(m, t.order ?? 0), -1);
+      templates.push({ id: "t" + now + "_" + Math.random().toString(36).slice(2,7), title, category, content, pinned, order: maxOrder + 1, createdAt: now, updatedAt: now });
+    }
+    await storageSet("templates", templates);
+    closeTplModal();
+    render();
+    toast(editingId ? "Template diperbarui" : "Template ditambahkan");
+  };
+  function showTplErr(msg){
+    const el = $("tplErr");
+    el.textContent = msg;
+    el.style.display = "block";
+  }
+
+  // ---------- Delete ----------
+  function openDeleteConfirm(id){
+    deletingId = id;
+    const t = templates.find(x => x.id === id);
+    $("delName").textContent = t ? `"${t.title}"` : "";
+    $("delOverlay").classList.add("open");
+  }
+  $("delCancel").onclick = () => $("delOverlay").classList.remove("open");
+  $("delConfirm").onclick = async () => {
+    templates = templates.filter(x => x.id !== deletingId);
+    await storageSet("templates", templates);
+    $("delOverlay").classList.remove("open");
+    render();
+    toast("Template dihapus");
+  };
+
+  // ---------- Kelola Kategori ----------
+  $("manageCatBtn").onclick = () => { renderCatList(); $("catOverlay").classList.add("open"); };
+  $("catDone").onclick = () => {
+    $("catOverlay").classList.remove("open");
+    renderTplCategoryOptions($("tplCategory").value);
+  };
+  function renderCatList(){
+    const wrap = $("catList");
+    wrap.innerHTML = categories.map(c => {
+      const count = templates.filter(t => t.category === c).length;
+      return `<div class="cat-row">
+        <span>${escHtml(c)} <span style="color:var(--text-muted);font-size:12px;">(${count})</span></span>
+        <button class="btn-ghost btn-sm" data-cat="${escAttr(c)}" ${categories.length <= 1 ? "disabled" : ""}>Hapus</button>
+      </div>`;
+    }).join("");
+    wrap.querySelectorAll("button[data-cat]").forEach(b => {
+      b.onclick = async () => {
+        const cat = b.dataset.cat;
+        const count = templates.filter(t => t.category === cat).length;
+        if(count > 0 && !confirm(`Kategori "${cat}" dipakai ${count} template. Template tersebut akan dipindah ke "${categories.find(c=>c!==cat)}". Lanjutkan?`)) return;
+        const fallback = categories.find(c => c !== cat);
+        templates.forEach(t => { if(t.category === cat) t.category = fallback; });
+        categories = categories.filter(c => c !== cat);
+        await storageSet("categories", categories);
+        await storageSet("templates", templates);
+        renderCatList();
+        render();
+      };
+    });
+  }
+  $("addCatBtn").onclick = async () => {
+    const input = $("newCatInput");
+    const name = input.value.trim();
+    if(!name) return;
+    if(categories.includes(name)){ toast("Kategori sudah ada"); return; }
+    categories.push(name);
+    await storageSet("categories", categories);
+    input.value = "";
+    renderCatList();
+    render();
+  };
+
+  // ---------- Search / filter ----------
+  $("searchInput").addEventListener("input", (e) => { searchQuery = e.target.value; renderList(); });
+  $("categoryFilter").addEventListener("change", (e) => { currentFilter = e.target.value; renderList(); });
+
+  // ---------- Init ----------
+  async function init(){
+    const [t, c, p] = await Promise.all([
+      storageGet("templates"),
+      storageGet("categories"),
+      storageGet("admin-password")
+    ]);
+    templates = Array.isArray(t) ? t : [];
+    let needsOrderSave = false;
+    templates.forEach((tpl, i) => {
+      if(typeof tpl.order !== "number"){ tpl.order = i; needsOrderSave = true; }
+    });
+    if(needsOrderSave) await storageSet("templates", templates);
+    categories = Array.isArray(c) && c.length ? c : DEFAULT_CATEGORIES;
+    if(!Array.isArray(c) || !c.length){
+      await storageSet("categories", categories);
+    }
+    adminPassword = (typeof p === "string") ? p : null;
+    render();
+  }
+  init();
+})();
+</script>
+</body>
+</html>
