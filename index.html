@@ -87,8 +87,8 @@
   .btn-primary:hover{background:var(--accent-dark);}
   .btn-ghost{background:transparent;color:var(--text-muted);}
   .btn-ghost:hover{background:#EDEFF2;color:var(--text);}
-  .btn-outline{background:#fff;color:var(--text);border:1px solid var(--border);}
-  .btn-outline:hover{background:#F7F8FA;}
+  .btn-outline{background:var(--surface);color:var(--text);border:1px solid var(--border);}
+  .btn-outline:hover{background:var(--surface-alt);}
   .btn-danger-text{background:transparent;color:var(--danger);}
   .btn-danger-text:hover{background:var(--danger-soft);}
   .btn-sm{padding:5px 10px;font-size:12.5px;}
@@ -100,18 +100,12 @@
   .search-wrap svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-muted);}
   input[type=text],input[type=password],select,textarea{
     font-family:inherit;font-size:13.5px;border:1px solid var(--border);border-radius:8px;
-    padding:9px 12px;background:#fff;color:var(--text);width:100%;
+    padding:9px 12px;background:var(--surface);color:var(--text);width:100%;
   }
   .search-wrap input{padding-left:34px;}
   select{max-width:190px;}
   input:focus,select:focus,textarea:focus,[contenteditable]:focus{
     outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);
-  }
-
-  /* Notice */
-  .notice{
-    font-size:12px;color:var(--text-muted);margin-top:10px;padding:8px 11px;
-    background:#EEF0F3;border-radius:8px;display:flex;gap:7px;align-items:flex-start;
   }
 
   /* Cards */
@@ -151,6 +145,29 @@
   .card-content b, .card-content strong{font-weight:700;}
   .card-actions{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;}
 
+  /* Highlight & Mark Styling */
+  mark, .mark-yellow, .mark-green, .mark-red{
+    padding:2px 6px;border-radius:4px;font-weight:500;
+  }
+  .mark-yellow, mark{
+    background:#FEF08A;color:#854D0E;
+  }
+  .mark-green{
+    background:#DCFCE7;color:#166534;
+  }
+  .mark-red{
+    background:#FEE2E2;color:#991B1B;font-weight:600;
+  }
+  html[data-theme="dark"] .mark-yellow{
+    background:#713F12;color:#FEF08A;
+  }
+  html[data-theme="dark"] .mark-green{
+    background:#14532D;color:#BBF7D0;
+  }
+  html[data-theme="dark"] .mark-red{
+    background:#7F1D1D;color:#FECACA;
+  }
+
   .empty{
     text-align:center;padding:60px 20px;color:var(--text-muted);
   }
@@ -163,8 +180,8 @@
   }
   .overlay.open{display:flex;}
   .modal{
-    background:#fff;border-radius:14px;width:100%;max-width:520px;padding:22px;
-    box-shadow:0 20px 50px rgba(0,0,0,.2);
+    background:var(--surface);border-radius:14px;width:100%;max-width:520px;padding:22px;
+    box-shadow:0 20px 50px rgba(0,0,0,.2);color:var(--text);border:1px solid var(--border);
   }
   .modal h2{margin:0 0 14px;font-size:17px;}
   .field{margin-bottom:13px;}
@@ -173,22 +190,22 @@
   .field-row .field{flex:1;}
 
   .toolbar{
-    display:flex;align-items:center;gap:5px;border:1px solid var(--border);border-bottom:none;
-    border-radius:8px 8px 0 0;padding:6px 8px;background:#FAFBFC;flex-wrap:wrap;
+    display:flex;align-items:center;gap:6px;border:1px solid var(--border);border-bottom:none;
+    border-radius:8px 8px 0 0;padding:6px 8px;background:var(--surface-alt);flex-wrap:wrap;
   }
   .toolbar button{
-    background:#fff;border:1px solid var(--border);border-radius:6px;padding:4px 9px;
-    font-size:12.5px;font-weight:700;color:var(--text);
+    background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:4px 9px;
+    font-size:12px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:4px;
   }
-  .toolbar button.active{background:var(--accent-soft);border-color:var(--accent);color:var(--accent-dark);}
+  .toolbar button:hover{background:var(--border);}
   .swatch{
-    width:19px;height:19px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px var(--border);
+    width:19px;height:19px;border-radius:50%;border:2px solid var(--surface);box-shadow:0 0 0 1px var(--border);
     padding:0;cursor:pointer;
   }
   .swatch-sep{width:1px;height:18px;background:var(--border);margin:0 3px;}
   .editor{
-    min-height:120px;border:1px solid var(--border);border-radius:0 0 8px 8px;padding:10px 12px;
-    font-size:13.8px;line-height:1.55;background:#fff;
+    min-height:130px;border:1px solid var(--border);border-radius:0 0 8px 8px;padding:10px 12px;
+    font-size:13.8px;line-height:1.55;background:var(--surface);color:var(--text);
   }
   .editor:empty:before{content:attr(data-placeholder);color:#9aa1ab;}
 
@@ -291,11 +308,15 @@
       <div class="toolbar">
         <button type="button" id="boldBtn" title="Tebal"><b>B</b></button>
         <div class="swatch-sep"></div>
-        <button type="button" class="swatch" data-color="#1C222B" style="background:#1C222B" title="Hitam"></button>
-        <button type="button" class="swatch" data-color="#C0392B" style="background:#C0392B" title="Merah"></button>
-        <button type="button" class="swatch" data-color="#2E6FA3" style="background:#2E6FA3" title="Biru"></button>
-        <button type="button" class="swatch" data-color="#1F6F63" style="background:#1F6F63" title="Hijau"></button>
-        <button type="button" class="swatch" data-color="#B5651D" style="background:#B5651D" title="Oranye"></button>
+        <button type="button" id="markYellowBtn" title="Mark Kuning">🟨 Kuning</button>
+        <button type="button" id="markGreenBtn" title="Mark Hijau">🟩 Hijau</button>
+        <button type="button" id="markRedBtn" title="Mark Merah/Penting">🟥 Merah</button>
+        <div class="swatch-sep"></div>
+        <button type="button" class="swatch" data-color="#1C222B" style="background:#1C222B" title="Warna Font Hitam"></button>
+        <button type="button" class="swatch" data-color="#C0392B" style="background:#C0392B" title="Warna Font Merah"></button>
+        <button type="button" class="swatch" data-color="#2E6FA3" style="background:#2E6FA3" title="Warna Font Biru"></button>
+        <button type="button" class="swatch" data-color="#1F6F63" style="background:#1F6F63" title="Warna Font Hijau"></button>
+        <button type="button" class="swatch" data-color="#B5651D" style="background:#B5651D" title="Warna Font Oranye"></button>
       </div>
       <div class="editor" id="tplEditor" contenteditable="true" data-placeholder="Tulis isi jawaban di sini..."></div>
     </div>
@@ -359,7 +380,7 @@
 
   let templates = [];
   let categories = [];
-  let adminPassword = null; // null = belum diset
+  let adminPassword = null;
   let isAdmin = false;
   let editingId = null;
   let deletingId = null;
@@ -408,7 +429,7 @@
     return d.textContent || "";
   }
 
-  // --- Sanitizer: only allow b/strong/br/div/span(color) ---
+  // --- Sanitizer: allow b/strong/br/div/p/mark/span(color & class) ---
   function sanitizeHtml(html){
     const src = document.createElement("div");
     src.innerHTML = html;
@@ -421,10 +442,11 @@
         } else if(child.nodeType === Node.ELEMENT_NODE){
           const tag = child.tagName.toLowerCase();
           if(tag === "script" || tag === "style"){
-            continue; // drop entirely
+            continue;
           }
-          if(["b","strong","br","div","p"].includes(tag)){
+          if(["b","strong","br","div","p","mark"].includes(tag)){
             const el = document.createElement(tag === "p" ? "div" : tag);
+            if(child.className) el.className = child.className;
             parent.appendChild(el);
             cleanNode(child, el);
           } else if(tag === "span" || tag === "font"){
@@ -433,10 +455,10 @@
             if(color && /^(#[0-9a-fA-F]{3,8}|rgb\(.*\)|[a-zA-Z]+)$/.test(color.trim())){
               el.style.color = color;
             }
+            if(child.className) el.className = child.className;
             parent.appendChild(el);
             cleanNode(child, el);
           } else {
-            // unwrap unknown tags, keep children
             cleanNode(child, parent);
           }
         }
@@ -505,7 +527,7 @@
     if(items.length === 0){
       list.innerHTML = `
         <div class="empty">
-          <div>📭</div>
+          <div style="font-size:32px;">📭</div>
           <p>${templates.length === 0 ? "Belum ada template jawaban." : "Tidak ada template yang cocok."}</p>
           ${isAdmin && templates.length === 0 ? `<button class="btn-primary" id="emptyAddBtn">+ Tambah Template Pertama</button>` : ""}
         </div>`;
@@ -555,7 +577,7 @@
     storageSet("templates", templates);
   }
 
-  // ---------- Urutkan modal (drag & drop hanya di sini) ----------
+  // ---------- Urutkan modal ----------
   function openSortModal(){
     renderSortList();
     $("sortOverlay").classList.add("open");
@@ -745,8 +767,18 @@
     $("loginOverlay").classList.add("open");
   }
 
-  // ---------- Template modal ----------
-  let savedRange = null;
+  // ---------- Template modal & Highlight Formatting ----------
+  function wrapSelectionWithClass(className){
+    const sel = window.getSelection();
+    if(!sel.rangeCount || sel.isCollapsed) return;
+    const range = sel.getRangeAt(0);
+    const span = document.createElement("span");
+    span.className = className;
+    span.appendChild(range.extractContents());
+    range.insertNode(span);
+    sel.removeAllRanges();
+  }
+
   function openTplModal(id){
     editingId = id;
     const t = id ? templates.find(x => x.id === id) : null;
@@ -770,6 +802,25 @@
     document.execCommand("bold");
     $("tplEditor").focus();
   });
+
+  $("markYellowBtn").addEventListener("mousedown", (e) => e.preventDefault());
+  $("markYellowBtn").addEventListener("click", () => {
+    wrapSelectionWithClass("mark-yellow");
+    $("tplEditor").focus();
+  });
+
+  $("markGreenBtn").addEventListener("mousedown", (e) => e.preventDefault());
+  $("markGreenBtn").addEventListener("click", () => {
+    wrapSelectionWithClass("mark-green");
+    $("tplEditor").focus();
+  });
+
+  $("markRedBtn").addEventListener("mousedown", (e) => e.preventDefault());
+  $("markRedBtn").addEventListener("click", () => {
+    wrapSelectionWithClass("mark-red");
+    $("tplEditor").focus();
+  });
+
   document.querySelectorAll(".swatch").forEach(sw => {
     sw.addEventListener("mousedown", (e) => e.preventDefault());
     sw.addEventListener("click", () => {
