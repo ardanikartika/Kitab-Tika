@@ -79,6 +79,18 @@
   .badge-role.viewer{background:var(--surface-alt);color:var(--text-muted);border:1px solid var(--border);}
   .dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
 
+  /* Tab Navigation */
+  .nav-tabs{
+    display:flex;gap:6px;margin-top:14px;border-bottom:1px solid var(--border);padding-bottom:8px;
+  }
+  .tab-btn{
+    background:transparent;color:var(--text-muted);border:none;border-radius:6px;
+    padding:6px 14px;font-size:13.5px;font-weight:600;cursor:pointer;
+  }
+  .tab-btn.active{
+    background:var(--accent-soft);color:var(--accent-dark);
+  }
+
   button{
     font-family:inherit;cursor:pointer;border:none;border-radius:8px;
     font-size:13.5px;font-weight:600;padding:8px 13px;transition:background .12s,opacity .12s;
@@ -95,7 +107,7 @@
   button:disabled{opacity:.5;cursor:not-allowed;}
 
   /* Controls row */
-  .controls{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;}
+  .controls{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
   .search-wrap{position:relative;flex:1;min-width:180px;}
   .search-wrap svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-muted);}
   input[type=text],input[type=password],input[type=url],select,textarea{
@@ -108,7 +120,10 @@
     outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);
   }
 
-  /* Cards */
+  /* Cards View */
+  .view-container{display:none;}
+  .view-container.active{display:block;}
+
   .list{display:flex;flex-direction:column;gap:10px;margin-top:16px;}
   .card{
     background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--cat-color,var(--accent));
@@ -117,12 +132,7 @@
     box-shadow:var(--shadow);
   }
   .card:hover{transform:translateY(-1px);}
-  .card[draggable="true"]{cursor:grab;}
-  .card[draggable="true"]:active{cursor:grabbing;}
-  .card.dragging{opacity:.4;}
-  .card.drag-over{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft);}
-  .drag-handle{color:var(--text-muted);font-size:13px;margin-right:2px;user-select:none;}
-
+  
   .sort-row{
     display:flex;align-items:center;gap:10px;padding:9px 6px;border-bottom:1px solid var(--border);
     cursor:grab;border-radius:6px;
@@ -133,6 +143,7 @@
   .sort-row.drag-over{background:var(--accent-soft);}
   .sort-row .drag-handle{font-size:15px;}
   .sort-row .sort-title{flex:1;font-size:13.5px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  
   .card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:6px;}
   .card-tags{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
   .cat-tag{
@@ -145,45 +156,35 @@
   .card-content b, .card-content strong{font-weight:700;}
   .card-actions{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;}
 
-  /* Attachment Button */
-  .attachment-wrap{margin-top:10px;}
-  .attachment-link{
-    display:inline-flex;align-items:center;gap:5px;
-    padding:5px 11px;border-radius:6px;
-    background:var(--surface-alt);color:var(--accent);
-    border:1px solid var(--border);text-decoration:none;
-    font-size:12.5px;font-weight:600;transition:background .12s,color .12s;
+  /* Link & Doc Cards Grid */
+  .docs-grid{
+    display:grid;grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));gap:12px;margin-top:16px;
   }
-  .attachment-link:hover{
-    background:var(--accent-soft);color:var(--accent-dark);
+  .doc-card{
+    background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+    padding:16px;display:flex;flex-direction:column;justify-content:space-between;
+    box-shadow:var(--shadow);transition:transform .12s, border-color .12s;
   }
+  .doc-card:hover{transform:translateY(-2px);border-color:var(--accent);}
+  .doc-card h4{margin:0 0 6px;font-size:15px;display:flex;align-items:center;gap:6px;}
+  .doc-card p{font-size:13px;color:var(--text-muted);margin:0 0 14px;line-height:1.4;}
+  .doc-footer{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-top:auto;}
+  .btn-doc-open{
+    display:inline-flex;align-items:center;gap:5px;background:var(--accent);color:#fff;
+    padding:6px 12px;border-radius:6px;text-decoration:none;font-size:12.5px;font-weight:600;
+  }
+  .btn-doc-open:hover{background:var(--accent-dark);}
 
   /* Highlight & Mark Styling */
-  mark, .mark-yellow, .mark-green, .mark-red{
-    padding:2px 6px;border-radius:4px;font-weight:500;
-  }
-  .mark-yellow, mark{
-    background:#FEF08A;color:#854D0E;
-  }
-  .mark-green{
-    background:#DCFCE7;color:#166534;
-  }
-  .mark-red{
-    background:#FEE2E2;color:#991B1B;font-weight:600;
-  }
-  html[data-theme="dark"] .mark-yellow{
-    background:#713F12;color:#FEF08A;
-  }
-  html[data-theme="dark"] .mark-green{
-    background:#14532D;color:#BBF7D0;
-  }
-  html[data-theme="dark"] .mark-red{
-    background:#7F1D1D;color:#FECACA;
-  }
+  mark, .mark-yellow, .mark-green, .mark-red{padding:2px 6px;border-radius:4px;font-weight:500;}
+  .mark-yellow, mark{background:#FEF08A;color:#854D0E;}
+  .mark-green{background:#DCFCE7;color:#166534;}
+  .mark-red{background:#FEE2E2;color:#991B1B;font-weight:600;}
+  html[data-theme="dark"] .mark-yellow{background:#713F12;color:#FEF08A;}
+  html[data-theme="dark"] .mark-green{background:#14532D;color:#BBF7D0;}
+  html[data-theme="dark"] .mark-red{background:#7F1D1D;color:#FECACA;}
 
-  .empty{
-    text-align:center;padding:60px 20px;color:var(--text-muted);
-  }
+  .empty{text-align:center;padding:60px 20px;color:var(--text-muted);}
   .empty svg{margin-bottom:10px;opacity:.5;}
 
   /* Modal */
@@ -269,7 +270,14 @@
       </div>
     </div>
 
-    <div class="controls">
+    <!-- Tab Navigasi -->
+    <div class="nav-tabs">
+      <button class="tab-btn active" id="tabTemplatesBtn">📋 Template Jawaban</button>
+      <button class="tab-btn" id="tabDocsBtn">🔗 Kumpulan Link & Dokumen</button>
+    </div>
+
+    <!-- Controls Template -->
+    <div class="controls" id="templateControls">
       <div class="search-wrap">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
         <input type="text" id="searchInput" placeholder="Cari judul atau isi jawaban...">
@@ -281,9 +289,26 @@
       <input type="file" id="restoreFile" accept="application/json" style="display:none;">
       <button class="btn-primary" id="addBtn" style="display:none;">+ Template</button>
     </div>
+
+    <!-- Controls Link/Dokumen -->
+    <div class="controls" id="docControls" style="display:none;">
+      <div class="search-wrap">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <input type="text" id="searchDocInput" placeholder="Cari dokumen, SOP Drive, link tools...">
+      </div>
+      <button class="btn-primary" id="addDocBtn" style="display:none;">+ Tambah Link</button>
+    </div>
   </header>
 
-  <div class="list" id="list"></div>
+  <!-- VIEW 1: DAFTAR TEMPLATE JAWABAN -->
+  <div class="view-container active" id="viewTemplates">
+    <div class="list" id="list"></div>
+  </div>
+
+  <!-- VIEW 2: DAFTAR LINK & DOKUMEN -->
+  <div class="view-container" id="viewDocs">
+    <div class="docs-grid" id="docsGrid"></div>
+  </div>
 
 </div>
 
@@ -333,11 +358,6 @@
       </div>
       <div class="editor" id="tplEditor" contenteditable="true" data-placeholder="Tulis isi jawaban di sini..."></div>
     </div>
-    <div class="field">
-      <label>Lampiran Link / Dokumen (Opsional)</label>
-      <input type="url" id="tplLink" placeholder="https://drive.google.com/... atau tautan dokumen web">
-      <div class="hint-text">Tautan Google Drive, Docs, Spreadsheet, atau halaman panduan luar.</div>
-    </div>
     <div class="checkline" style="margin-top:14px;">
       <input type="checkbox" id="tplPinned">
       <label for="tplPinned" style="margin:0;">Sematkan template ini di atas</label>
@@ -346,6 +366,34 @@
     <div class="modal-actions">
       <button class="btn-ghost" id="tplCancel">Batal</button>
       <button class="btn-primary" id="tplSave">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Tambah / Edit Link & Dokumen -->
+<div class="overlay" id="docModalOverlay">
+  <div class="modal">
+    <h2 id="docModalTitle">Tambah Link / Dokumen</h2>
+    <div class="field">
+      <label>Nama Dokumen / Alat</label>
+      <input type="text" id="docTitle" placeholder="Contoh: SOP Setting ONT ZTE (Google Drive)">
+    </div>
+    <div class="field">
+      <label>Kategori Dokumen</label>
+      <input type="text" id="docCategory" placeholder="Contoh: Dokumen SOP / Tools Jaringan / Spreadsheet">
+    </div>
+    <div class="field">
+      <label>URL / Link Dokumen</label>
+      <input type="url" id="docUrl" placeholder="https://drive.google.com/... atau https://...">
+    </div>
+    <div class="field">
+      <label>Deskripsi Singkat (Opsional)</label>
+      <textarea id="docDesc" style="min-height:70px;" placeholder="Penjelasan singkat isi dokumen ini..."></textarea>
+    </div>
+    <div class="err-text" id="docErr" style="display:none;"></div>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="docCancel">Batal</button>
+      <button class="btn-primary" id="docSave">Simpan Tautan</button>
     </div>
   </div>
 </div>
@@ -377,11 +425,11 @@
   </div>
 </div>
 
-<!-- Delete confirm -->
+<!-- Delete confirm Modal -->
 <div class="overlay" id="delOverlay">
   <div class="modal" style="max-width:380px;">
-    <h2>Hapus Template?</h2>
-    <p style="font-size:13.5px;color:var(--text-muted);margin-top:0;">Template <b id="delName"></b> akan dihapus permanen untuk semua orang. Tindakan ini tidak bisa dibatalkan.</p>
+    <h2 id="delHeading">Hapus Item?</h2>
+    <p style="font-size:13.5px;color:var(--text-muted);margin-top:0;">Item <b id="delName"></b> akan dihapus permanen. Tindakan ini tidak bisa dibatalkan.</p>
     <div class="modal-actions">
       <button class="btn-ghost" id="delCancel">Batal</button>
       <button class="btn-primary" style="background:var(--danger);" id="delConfirm">Hapus</button>
@@ -397,13 +445,19 @@
   const CAT_COLORS = ["#1F6F63","#2E6FA3","#B5651D","#7A5AB8","#C0392B","#5A7247","#8A6D3B","#3D6B99"];
 
   let templates = [];
+  let documents = [];
   let categories = [];
   let adminPassword = null;
   let isAdmin = false;
+  
+  let currentTab = "templates";
   let editingId = null;
+  let editingDocId = null;
+  let deletingType = null; // 'template' atau 'doc'
   let deletingId = null;
   let currentFilter = "all";
   let searchQuery = "";
+  let docSearchQuery = "";
   let dragSourceId = null;
 
   const $ = (id) => document.getElementById(id);
@@ -447,7 +501,6 @@
     return d.textContent || "";
   }
 
-  // --- Sanitizer: allow b/strong/br/div/p/mark/span(color & class) ---
   function sanitizeHtml(html){
     const src = document.createElement("div");
     src.innerHTML = html;
@@ -459,9 +512,7 @@
           parent.appendChild(document.createTextNode(child.textContent));
         } else if(child.nodeType === Node.ELEMENT_NODE){
           const tag = child.tagName.toLowerCase();
-          if(tag === "script" || tag === "style"){
-            continue;
-          }
+          if(tag === "script" || tag === "style") continue;
           if(["b","strong","br","div","p","mark"].includes(tag)){
             const el = document.createElement(tag === "p" ? "div" : tag);
             if(child.className) el.className = child.className;
@@ -486,7 +537,37 @@
     return out.innerHTML;
   }
 
-  // ---------- Rendering ----------
+  function escHtml(s){
+    return String(s || "").replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+  }
+  function escAttr(s){ return escHtml(s); }
+
+  // ---------- Navigasi Tab ----------
+  $("tabTemplatesBtn").onclick = () => switchTab("templates");
+  $("tabDocsBtn").onclick = () => switchTab("docs");
+
+  function switchTab(tab){
+    currentTab = tab;
+    if(tab === "templates"){
+      $("tabTemplatesBtn").classList.add("active");
+      $("tabDocsBtn").classList.remove("active");
+      $("viewTemplates").classList.add("active");
+      $("viewDocs").classList.remove("active");
+      $("templateControls").style.display = "flex";
+      $("docControls").style.display = "none";
+      renderList();
+    } else {
+      $("tabDocsBtn").classList.add("active");
+      $("tabTemplatesBtn").classList.remove("active");
+      $("viewDocs").classList.add("active");
+      $("viewTemplates").classList.remove("active");
+      $("docControls").style.display = "flex";
+      $("templateControls").style.display = "none";
+      renderDocsList();
+    }
+  }
+
+  // ---------- Admin Zone ----------
   function renderAdminZone(){
     const zone = $("adminZone");
     if(isAdmin){
@@ -505,6 +586,7 @@
       $("loginBtn").onclick = openLogin;
     }
     $("addBtn").style.display = isAdmin ? "inline-flex" : "none";
+    $("addDocBtn").style.display = isAdmin ? "inline-flex" : "none";
     $("sortBtn").style.display = isAdmin ? "inline-flex" : "none";
     $("backupBtn").style.display = isAdmin ? "inline-flex" : "none";
     $("restoreBtn").style.display = isAdmin ? "inline-flex" : "none";
@@ -525,11 +607,7 @@
     if(selected && categories.includes(selected)) sel.value = selected;
   }
 
-  function escHtml(s){
-    return String(s).replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
-  }
-  function escAttr(s){ return escHtml(s); }
-
+  // ---------- Render Template Jawaban ----------
   function renderList(){
     const list = $("list");
     let items = templates.filter(t => {
@@ -569,13 +647,6 @@
         </div>
         <h3>${escHtml(t.title)}</h3>
         <div class="card-content">${t.content}</div>
-        ${t.link ? `
-          <div class="attachment-wrap">
-            <a href="${escAttr(t.link)}" target="_blank" rel="noopener noreferrer" class="attachment-link">
-              📎 Buka Lampiran / Dokumen
-            </a>
-          </div>
-        ` : ''}
         <div class="card-actions">
           <button class="btn-outline btn-sm copy-btn" data-id="${t.id}">Salin</button>
           ${isAdmin ? `
@@ -588,9 +659,107 @@
 
     list.querySelectorAll(".copy-btn").forEach(b => b.onclick = () => copyTemplate(b.dataset.id));
     list.querySelectorAll(".edit-btn").forEach(b => b.onclick = () => openTplModal(b.dataset.id));
-    list.querySelectorAll(".del-btn").forEach(b => b.onclick = () => openDeleteConfirm(b.dataset.id));
+    list.querySelectorAll(".del-btn").forEach(b => b.onclick = () => openDeleteConfirm("template", b.dataset.id));
   }
 
+  // ---------- Render Kumpulan Link / Dokumen ----------
+  function renderDocsList(){
+    const grid = $("docsGrid");
+    let items = documents.filter(d => {
+      if(docSearchQuery){
+        const hay = (d.title + " " + (d.desc || "") + " " + (d.category || "")).toLowerCase();
+        if(!hay.includes(docSearchQuery.toLowerCase())) return false;
+      }
+      return true;
+    });
+
+    if(items.length === 0){
+      grid.innerHTML = `
+        <div class="empty" style="grid-column: 1 / -1;">
+          <div style="font-size:32px;">📂</div>
+          <p>${documents.length === 0 ? "Belum ada kumpulan dokumen/link tersimpan." : "Dokumen tidak ditemukan."}</p>
+          ${isAdmin && documents.length === 0 ? `<button class="btn-primary" id="emptyAddDocBtn">+ Tambah Dokumen Pertama</button>` : ""}
+        </div>`;
+      if(isAdmin && documents.length === 0){
+        $("emptyAddDocBtn").onclick = () => openDocModal(null);
+      }
+      return;
+    }
+
+    grid.innerHTML = items.map(d => `
+      <div class="doc-card">
+        <div>
+          <span class="cat-tag" style="background:var(--accent-soft);color:var(--accent-dark);margin-bottom:8px;">
+            📄 ${escHtml(d.category || 'Dokumen')}
+          </span>
+          <h4>${escHtml(d.title)}</h4>
+          <p>${escHtml(d.desc || 'Tidak ada deskripsi tambahan.')}</p>
+        </div>
+        <div class="doc-footer">
+          <a href="${escAttr(d.url)}" target="_blank" rel="noopener noreferrer" class="btn-doc-open">
+            Buka Tautan ↗
+          </a>
+          ${isAdmin ? `
+            <div style="display:flex;gap:4px;">
+              <button class="btn-ghost btn-sm edit-doc-btn" data-id="${d.id}">Edit</button>
+              <button class="btn-danger-text btn-sm del-doc-btn" data-id="${d.id}">Hapus</button>
+            </div>
+          ` : ""}
+        </div>
+      </div>
+    `).join("");
+
+    grid.querySelectorAll(".edit-doc-btn").forEach(b => b.onclick = () => openDocModal(b.dataset.id));
+    grid.querySelectorAll(".del-doc-btn").forEach(b => b.onclick = () => openDeleteConfirm("doc", b.dataset.id));
+  }
+
+  // ---------- Modal Kelola Link/Dokumen ----------
+  function openDocModal(id){
+    editingDocId = id;
+    const d = id ? documents.find(x => x.id === id) : null;
+    $("docModalTitle").textContent = d ? "Edit Link / Dokumen" : "Tambah Link / Dokumen";
+    $("docTitle").value = d ? d.title : "";
+    $("docCategory").value = d ? d.category : "";
+    $("docUrl").value = d ? d.url : "";
+    $("docDesc").value = d ? (d.desc || "") : "";
+    $("docErr").style.display = "none";
+    $("docModalOverlay").classList.add("open");
+    setTimeout(() => $("docTitle").focus(), 50);
+  }
+  function closeDocModal(){ $("docModalOverlay").classList.remove("open"); }
+  $("docCancel").onclick = closeDocModal;
+  $("addDocBtn").onclick = () => openDocModal(null);
+
+  $("docSave").onclick = async () => {
+    const title = $("docTitle").value.trim();
+    const category = $("docCategory").value.trim() || "Dokumen";
+    const url = $("docUrl").value.trim();
+    const desc = $("docDesc").value.trim();
+
+    if(!title){ showDocErr("Nama dokumen tidak boleh kosong."); return; }
+    if(!url){ showDocErr("URL link tidak boleh kosong."); return; }
+
+    const now = Date.now();
+    if(editingDocId){
+      const d = documents.find(x => x.id === editingDocId);
+      d.title = title; d.category = category; d.url = url; d.desc = desc; d.updatedAt = now;
+    } else {
+      documents.unshift({ id: "doc_" + now + "_" + Math.random().toString(36).slice(2,7), title, category, url, desc, createdAt: now });
+    }
+
+    await storageSet("documents", documents);
+    closeDocModal();
+    renderDocsList();
+    toast(editingDocId ? "Dokumen diperbarui" : "Dokumen ditambahkan");
+  };
+
+  function showDocErr(msg){
+    const el = $("docErr");
+    el.textContent = msg;
+    el.style.display = "block";
+  }
+
+  // ---------- Urutkan Modal ----------
   function reorderTemplates(sourceId, targetId){
     const sorted = [...templates].sort((a,b) => (a.order ?? 0) - (b.order ?? 0));
     const fromIdx = sorted.findIndex(t => t.id === sourceId);
@@ -602,7 +771,6 @@
     storageSet("templates", templates);
   }
 
-  // ---------- Urutkan modal ----------
   function openSortModal(){
     renderSortList();
     $("sortOverlay").classList.add("open");
@@ -660,6 +828,7 @@
       app: "panduan-kerja-tika",
       exportedAt: new Date().toISOString(),
       templates,
+      documents,
       categories
     };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
@@ -687,12 +856,14 @@
         e.target.value = "";
         return;
       }
-      const ok = confirm(`Pulihkan data dari file ini?\n\nData saat ini (${templates.length} template) akan DIGANTI dengan data dari backup (${data.templates.length} template). Tindakan ini tidak bisa dibatalkan.`);
+      const ok = confirm(`Pulihkan data dari file ini?\n\nSemua data saat ini akan DIGANTI dengan data dari file backup. Lanjutkan?`);
       if(!ok){ e.target.value = ""; return; }
       templates = data.templates;
+      documents = Array.isArray(data.documents) ? data.documents : [];
       categories = data.categories.length ? data.categories : DEFAULT_CATEGORIES;
       templates.forEach((tpl, i) => { if(typeof tpl.order !== "number") tpl.order = i; });
       await storageSet("templates", templates);
+      await storageSet("documents", documents);
       await storageSet("categories", categories);
       render();
       toast("Data berhasil dipulihkan dari backup");
@@ -712,7 +883,8 @@
   function render(){
     renderAdminZone();
     renderCategoryFilter();
-    renderList();
+    if(currentTab === "templates") renderList();
+    else renderDocsList();
   }
 
   // ---------- Login / Admin password ----------
@@ -792,7 +964,7 @@
     $("loginOverlay").classList.add("open");
   }
 
-  // ---------- Template modal & Highlight Formatting ----------
+  // ---------- Template Form Formatting ----------
   function wrapSelectionWithClass(className){
     const sel = window.getSelection();
     if(!sel.rangeCount || sel.isCollapsed) return;
@@ -811,7 +983,6 @@
     $("tplTitle").value = t ? t.title : "";
     renderTplCategoryOptions(t ? t.category : categories[0]);
     $("tplEditor").innerHTML = t ? t.content : "";
-    $("tplLink").value = (t && t.link) ? t.link : "";
     $("tplPinned").checked = t ? !!t.pinned : false;
     $("tplErr").style.display = "none";
     $("tplOverlay").classList.add("open");
@@ -819,7 +990,6 @@
   }
   function closeTplModal(){ $("tplOverlay").classList.remove("open"); }
   $("tplCancel").onclick = closeTplModal;
-
   $("addBtn").onclick = () => openTplModal(null);
 
   $("boldBtn").addEventListener("mousedown", (e) => e.preventDefault());
@@ -860,7 +1030,6 @@
     const title = $("tplTitle").value.trim();
     const category = $("tplCategory").value;
     const content = sanitizeHtml($("tplEditor").innerHTML.trim());
-    const link = $("tplLink").value.trim();
     const pinned = $("tplPinned").checked;
     if(!title){ showTplErr("Judul tidak boleh kosong."); return; }
     if(!stripHtml(content).trim()){ showTplErr("Isi jawaban tidak boleh kosong."); return; }
@@ -868,10 +1037,10 @@
     const now = Date.now();
     if(editingId){
       const t = templates.find(x => x.id === editingId);
-      t.title = title; t.category = category; t.content = content; t.link = link; t.pinned = pinned; t.updatedAt = now;
+      t.title = title; t.category = category; t.content = content; t.pinned = pinned; t.updatedAt = now;
     } else {
       const maxOrder = templates.reduce((m, t) => Math.max(m, t.order ?? 0), -1);
-      templates.push({ id: "t" + now + "_" + Math.random().toString(36).slice(2,7), title, category, content, link, pinned, order: maxOrder + 1, createdAt: now, updatedAt: now });
+      templates.push({ id: "t" + now + "_" + Math.random().toString(36).slice(2,7), title, category, content, pinned, order: maxOrder + 1, createdAt: now, updatedAt: now });
     }
     await storageSet("templates", templates);
     closeTplModal();
@@ -885,19 +1054,34 @@
   }
 
   // ---------- Delete ----------
-  function openDeleteConfirm(id){
+  function openDeleteConfirm(type, id){
+    deletingType = type;
     deletingId = id;
-    const t = templates.find(x => x.id === id);
-    $("delName").textContent = t ? `"${t.title}"` : "";
+    let name = "";
+    if(type === "template"){
+      const t = templates.find(x => x.id === id);
+      name = t ? `"${t.title}"` : "";
+      $("delHeading").textContent = "Hapus Template?";
+    } else {
+      const d = documents.find(x => x.id === id);
+      name = d ? `"${d.title}"` : "";
+      $("delHeading").textContent = "Hapus Link Dokumen?";
+    }
+    $("delName").textContent = name;
     $("delOverlay").classList.add("open");
   }
   $("delCancel").onclick = () => $("delOverlay").classList.remove("open");
   $("delConfirm").onclick = async () => {
-    templates = templates.filter(x => x.id !== deletingId);
-    await storageSet("templates", templates);
+    if(deletingType === "template"){
+      templates = templates.filter(x => x.id !== deletingId);
+      await storageSet("templates", templates);
+    } else {
+      documents = documents.filter(x => x.id !== deletingId);
+      await storageSet("documents", documents);
+    }
     $("delOverlay").classList.remove("open");
     render();
-    toast("Template dihapus");
+    toast("Item berhasil dihapus");
   };
 
   // ---------- Kelola Kategori ----------
@@ -919,7 +1103,7 @@
       b.onclick = async () => {
         const cat = b.dataset.cat;
         const count = templates.filter(t => t.category === cat).length;
-        if(count > 0 && !confirm(`Kategori "${cat}" dipakai ${count} template. Template tersebut akan dipindah ke "${categories.find(c=>c!==cat)}". Lanjutkan?`)) return;
+        if(count > 0 && !confirm(`Kategori "${cat}" dipakai ${count} template. Lanjutkan?`)) return;
         const fallback = categories.find(c => c !== cat);
         templates.forEach(t => { if(t.category === cat) t.category = fallback; });
         categories = categories.filter(c => c !== cat);
@@ -942,16 +1126,16 @@
     render();
   };
 
-  // ---------- Search / filter ----------
+  // ---------- Search / Filter Events ----------
   $("searchInput").addEventListener("input", (e) => { searchQuery = e.target.value; renderList(); });
+  $("searchDocInput").addEventListener("input", (e) => { docSearchQuery = e.target.value; renderDocsList(); });
   $("categoryFilter").addEventListener("change", (e) => { currentFilter = e.target.value; renderList(); });
 
-  // ---------- Theme (light/dark) ----------
+  // ---------- Theme Toggle ----------
   let theme = (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
   function applyTheme(){
     document.documentElement.setAttribute("data-theme", theme);
     $("themeToggle").textContent = theme === "light" ? "🌙" : "☀️";
-    $("themeToggle").title = theme === "light" ? "Ganti ke mode gelap" : "Ganti ke mode terang";
   }
   $("themeToggle").addEventListener("click", () => {
     theme = theme === "light" ? "dark" : "light";
@@ -961,12 +1145,14 @@
   // ---------- Init ----------
   async function init(){
     applyTheme();
-    const [t, c, p] = await Promise.all([
+    const [t, d, c, p] = await Promise.all([
       storageGet("templates"),
+      storageGet("documents"),
       storageGet("categories"),
       storageGet("admin-password")
     ]);
     templates = Array.isArray(t) ? t : [];
+    documents = Array.isArray(d) ? d : [];
     let needsOrderSave = false;
     templates.forEach((tpl, i) => {
       if(typeof tpl.order !== "number"){ tpl.order = i; needsOrderSave = true; }
