@@ -98,7 +98,7 @@
   .controls{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;}
   .search-wrap{position:relative;flex:1;min-width:180px;}
   .search-wrap svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-muted);}
-  input[type=text],input[type=password],select,textarea{
+  input[type=text],input[type=password],input[type=url],select,textarea{
     font-family:inherit;font-size:13.5px;border:1px solid var(--border);border-radius:8px;
     padding:9px 12px;background:var(--surface);color:var(--text);width:100%;
   }
@@ -144,6 +144,19 @@
   .card-content{font-size:13.8px;line-height:1.55;color:var(--text);word-wrap:break-word;white-space:pre-wrap;}
   .card-content b, .card-content strong{font-weight:700;}
   .card-actions{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;}
+
+  /* Attachment Button */
+  .attachment-wrap{margin-top:10px;}
+  .attachment-link{
+    display:inline-flex;align-items:center;gap:5px;
+    padding:5px 11px;border-radius:6px;
+    background:var(--surface-alt);color:var(--accent);
+    border:1px solid var(--border);text-decoration:none;
+    font-size:12.5px;font-weight:600;transition:background .12s,color .12s;
+  }
+  .attachment-link:hover{
+    background:var(--accent-soft);color:var(--accent-dark);
+  }
 
   /* Highlight & Mark Styling */
   mark, .mark-yellow, .mark-green, .mark-red{
@@ -319,6 +332,11 @@
         <button type="button" class="swatch" data-color="#B5651D" style="background:#B5651D" title="Warna Font Oranye"></button>
       </div>
       <div class="editor" id="tplEditor" contenteditable="true" data-placeholder="Tulis isi jawaban di sini..."></div>
+    </div>
+    <div class="field">
+      <label>Lampiran Link / Dokumen (Opsional)</label>
+      <input type="url" id="tplLink" placeholder="https://drive.google.com/... atau tautan dokumen web">
+      <div class="hint-text">Tautan Google Drive, Docs, Spreadsheet, atau halaman panduan luar.</div>
     </div>
     <div class="checkline" style="margin-top:14px;">
       <input type="checkbox" id="tplPinned">
@@ -551,6 +569,13 @@
         </div>
         <h3>${escHtml(t.title)}</h3>
         <div class="card-content">${t.content}</div>
+        ${t.link ? `
+          <div class="attachment-wrap">
+            <a href="${escAttr(t.link)}" target="_blank" rel="noopener noreferrer" class="attachment-link">
+              📎 Buka Lampiran / Dokumen
+            </a>
+          </div>
+        ` : ''}
         <div class="card-actions">
           <button class="btn-outline btn-sm copy-btn" data-id="${t.id}">Salin</button>
           ${isAdmin ? `
@@ -786,6 +811,7 @@
     $("tplTitle").value = t ? t.title : "";
     renderTplCategoryOptions(t ? t.category : categories[0]);
     $("tplEditor").innerHTML = t ? t.content : "";
+    $("tplLink").value = (t && t.link) ? t.link : "";
     $("tplPinned").checked = t ? !!t.pinned : false;
     $("tplErr").style.display = "none";
     $("tplOverlay").classList.add("open");
@@ -834,6 +860,7 @@
     const title = $("tplTitle").value.trim();
     const category = $("tplCategory").value;
     const content = sanitizeHtml($("tplEditor").innerHTML.trim());
+    const link = $("tplLink").value.trim();
     const pinned = $("tplPinned").checked;
     if(!title){ showTplErr("Judul tidak boleh kosong."); return; }
     if(!stripHtml(content).trim()){ showTplErr("Isi jawaban tidak boleh kosong."); return; }
@@ -841,10 +868,10 @@
     const now = Date.now();
     if(editingId){
       const t = templates.find(x => x.id === editingId);
-      t.title = title; t.category = category; t.content = content; t.pinned = pinned; t.updatedAt = now;
+      t.title = title; t.category = category; t.content = content; t.link = link; t.pinned = pinned; t.updatedAt = now;
     } else {
       const maxOrder = templates.reduce((m, t) => Math.max(m, t.order ?? 0), -1);
-      templates.push({ id: "t" + now + "_" + Math.random().toString(36).slice(2,7), title, category, content, pinned, order: maxOrder + 1, createdAt: now, updatedAt: now });
+      templates.push({ id: "t" + now + "_" + Math.random().toString(36).slice(2,7), title, category, content, link, pinned, order: maxOrder + 1, createdAt: now, updatedAt: now });
     }
     await storageSet("templates", templates);
     closeTplModal();
