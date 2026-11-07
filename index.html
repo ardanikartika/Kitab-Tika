@@ -4,19 +4,29 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Panduan Kerja Tika</title>
-  <!-- Bagian Header yang disesuaikan -->
-<header>
-  <div class="header-container">
-    <!-- Judul Asli -->
-    <div>
-      <div>
-    <!-- Tambahan Widget Waktu di Sebelah Kanan -->
-    <div id="live-clock" class="real-time-clock">
-      Memuat waktu...
+ <header>
+  <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; flex-wrap: wrap; gap: 10px;">
+    
+    <!-- Bagian Kiri: Judul dan Icon Garis Hijau -->
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <span style="width: 4px; height: 24px; background-color: #1b4d3e; display: inline-block; border-radius: 2px;"></span>
+      <h1 style="margin: 0; font-size: 1.5rem; font-weight: bold; color: #111;">
+        Panduan Kerja Tika
+      </h1>
+      
+      <!-- Jam diletakkan PERSIS di sebelah kanan tulisan Panduan Kerja Tika -->
+      <span id="live-clock" style="font-size: 0.9rem; color: #555; font-weight: normal; margin-left: 15px; background: #f0f2f5; padding: 3px 8px; border-radius: 6px;">
+        Memuat waktu...
+      </span>
     </div>
+
+    <!-- Bagian Kanan: Tombol Admin / Ganti Password (yang sudah ada sebelumnya) -->
+    <div>
+      <!-- Tombol-tombol bawaan Kakak tetap di sini -->
+    </div>
+
   </div>
 </header>
-
 <!-- Skrip JavaScript untuk Jam -->
 <script>
   function updateLiveClock() {
@@ -32,14 +42,13 @@
       hour12: false 
     };
     
-    // Format waktu Indonesia (ID)
+    // Format Waktu Indonesia
     const timeString = now.toLocaleDateString('id-ID', options).replace(/\./g, ':');
     document.getElementById('live-clock').innerText = timeString + ' WIB';
   }
 
-  // Jalankan detik per detik
   setInterval(updateLiveClock, 1000);
-  updateLiveClock(); // Panggil sekali di awal agar tidak ada jeda muat
+  updateLiveClock();
 </script>
 <style>
   :root{
